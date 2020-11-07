@@ -1,0 +1,27 @@
+{
+  "name": "serverless-capture-slack-app",
+  "version": "0.1.0",
+  "description": "slack app to capture web page by serverless framework",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod"
+  },
+  "keywords": [
+    "serverless",
+    "slack"
+  ],
+  "author": "rhythm191",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "aws-sdk": "^2.787.0",
+    "dayjs": "^1.9.5",
+    "chrome-aws-lambda": "^5.3.1",
+    "query-string": "^6.13.7",
+    "puppeteer-core": "^5.4.1"
+  },
+  "devDependencies": {
+    "prettier": "^2.1.2"
+  }
+}

@@ -1,0 +1,61 @@
+service: serverless-capture-slack-app
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-1
+  stage: ${opt:stage, 'dev'}
+  # プロファイルは各自のものを使おう。
+  profile: rhythm191
+  memorySize: 2048
+  timeout: 90
+  layers:
+    - arn:aws:lambda:ap-northeast-1:764866452798:layer:chrome-aws-lambda:19
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+      Resource: arn:aws:s3:::serverless-capture-slack-app/*
+
+package:
+  exclude:
+    - .prettier*
+
+functions:
+  accept:
+    handler: handler.accept
+  capture:
+    handler: handler.capture
+    timeout: 300
+
+stepFunctions:
+  stateMachines:
+    captureSteps:
+      name: serverless-capture-slack-app-${opt:stage, 'dev'}
+      events:
+        - http:
+            path: serverless-capture-slack-app
+            method: post
+      definition:
+        Comment: "capture function"
+        StartAt: accept
+        States:
+          accept:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [accept, Arn]
+            Next: capture
+          capture:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [capture, Arn]
+            End: true
+
+
+# plugins
+plugins:
+  - serverless-step-functions
+  - serverless-pseudo-parameters
